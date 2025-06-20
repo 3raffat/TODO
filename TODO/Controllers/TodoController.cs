@@ -1,14 +1,22 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TODO.Models;
+using TODO.Models.Repository;
 
 namespace TODO.Controllers
 {
     public class TodoController : Controller
     {
+        public IRepository<Todo> Todo { get; }
+
+        public TodoController(IRepository<Todo> todo)
+        {
+            Todo = todo;
+        }
         // GET: TodoController
         public ActionResult Index()
         {
-            return View();
+            return View(Todo.View());
         }
 
         // GET: TodoController/Details/5
@@ -26,10 +34,11 @@ namespace TODO.Controllers
         // POST: TodoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Todo collection)
         {
             try
             {
+                Todo.Add(collection);
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -41,16 +50,17 @@ namespace TODO.Controllers
         // GET: TodoController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return View(Todo.Find(id));
         }
 
         // POST: TodoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Todo collection)
         {
             try
             {
+                Todo.Update(id,collection);    
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -62,16 +72,17 @@ namespace TODO.Controllers
         // GET: TodoController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            return View(Todo.Find(id));
         }
 
         // POST: TodoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Todo collection)
         {
             try
             {
+                Todo.Delete(id,collection);    
                 return RedirectToAction(nameof(Index));
             }
             catch
